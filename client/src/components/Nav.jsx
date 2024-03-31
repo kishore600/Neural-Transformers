@@ -25,7 +25,6 @@ const Nav = () => {
       setUser(null)
     }
   })
-  console.log(user);
   const logout = () => {
     console.log("Logout button clicked");
     localStorage.removeItem("userInfo");
@@ -39,7 +38,8 @@ const Nav = () => {
     {name:"Courses", link:"/courses"},
     {name:"Services", link:"/services"},
     {name:"Products", link:"/product"},
-    {name:"Connect", link:"/connect"}
+    {name:"Connect", link:"/connect"},
+    {name:"Enrolled Courses", link:"/enrolled"}
     
     // {name:"Login", link:"/login"},
   ]

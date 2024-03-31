@@ -32,17 +32,6 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema
 
-const videoSchema = new Schema({
-    subtitle: {
-        type: String,
-        required: true
-    },
-    videoUrl: {
-        type: [String],
-        required: true
-    }
-});
-
 const courseSchema = new Schema({
     imageUrl:{
         type:String,

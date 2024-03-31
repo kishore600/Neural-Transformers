@@ -17,9 +17,10 @@ const userSchema =  new Schema({
     },
     favCourses: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref:'Course',
-        default:[]
+        ref:"Course",
+        default:[{}]
     }],
+    
     isAdmin: {
         type: Boolean,
         required: true,

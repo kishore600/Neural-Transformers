@@ -1,27 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import Select from 'react-select';
 import { useNavigate } from 'react-router-dom';
-
-
-const options = [
-    { value: "datascience", label: 'Data Science' },
-    { value: "python", label: 'Python A to Z' },
-    { value: "dsa", label: 'DSA in Python' },
-    { value: "ai", label: 'AI' },
-    { value: "machinelearning", label: 'Machine Learning' },
-    { value: "UI/UX", label: 'UI/UX Designing' },
-    { value: "webdevelopment", label: 'Web Development' }
-];
-
+import axios from 'axios';
+import {toast} from 'react-toastify'
 const Createusers = () => {
     const navigate = useNavigate()
     const [users, setUsers] = useState({
         username: '',
         email: '',
         password: '',
-        coursename: '',
+        favCourses: [],
         isAdmin: '',
     });
+    const [courses, setCourses] = useState([]);
+    const[error,setError] = useState('')
+
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const response = await fetch('http://localhost:5000/course/');
+            if (!response.ok) {
+              throw new Error('Failed to fetch data');
+            }
+            const data = await response.json();
+            setCourses(data);
+          } catch (error) {
+            console.error('Error fetching data:', error.message);
+            toast.error('Error fetching data:', error.message);
+          }
+        };
+    
+        fetchData();
+      }, []);
+
+    const options = courses.map(course => ({
+        value: course._id,
+        label: course.title
+    }));
+
+    console.log(options)
+    
     const [selectedOptions, setSelectedOptions] = useState([]);
 
     function handleChange(e) {
@@ -37,15 +55,37 @@ const Createusers = () => {
         setSelectedOptions(selectedOption);
         setUsers(prevUsers => ({
             ...prevUsers,
-            coursename: selectedValues
+            favCourses: selectedValues
         }));
     }
 
-    function handleSubmit(event) {
+    const handleSubmit  = async (event) => {
         event.preventDefault();
+    try {
+
+        // Handle user registration
+        const userInfoJSON = localStorage.getItem('userInfo');
+        const userInfo = JSON.parse(userInfoJSON);
+        const { token } = userInfo;
+        const JWTtoken = token;
+        console.log(token);
+        const config = {
+            headers: {
+                Authorization: `Bearer ${JWTtoken}`,
+            },
+        };
+
+        console.log(users)
+        const registerResponse = await axios.post(`http://localhost:5000/auth/register`, users, config)
+        console.log(registerResponse)
+        toast.success("User added successfully!");
+        } catch (error) {
+            setError(error.message);
+            toast.error(error);
+        }
+        
         navigate('/userlist')
         console.log(users);
-        // Submit data to API or perform other actions
     }
 
     return (
